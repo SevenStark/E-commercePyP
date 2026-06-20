@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - PYP Tornillos</title>
+    <link rel="icon" href="img/icono.ico">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * { box-sizing: border-box; }
+
+        .app-page {
+            background: var(--bg-dark);
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            background: var(--primary);
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+        .logo-round {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--text-dark);
+            flex-shrink: 0;
+        }
+        .app-header h1 {
+            font-size: clamp(0.85rem, 3vw, 1.2rem);
+            color: var(--text-dark);
+            flex: 1;
+            text-align: center;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+        .btn-power {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #c0392b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .btn-power:active { transform: scale(0.9); }
+        .btn-power svg { fill: #fff; width: 20px; height: 20px; }
+
+        /* ===== COMPANY BAR ===== */
+        .company-bar {
+            background: #1a1a1a;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            min-height: 48px;
+        }
+        .company-bar .company-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            color: var(--primary);
+        }
+        .company-bar .company-info .emp-icon { font-size: 1.2rem; }
+        .company-bar .no-company {
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .company-bar .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-sm-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 32px;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .btn-sm-outline:hover { background: rgba(249,193,25,0.15); }
+        .btn-sm-outline:active { transform: scale(0.95); }
+        .btn-sm-solid {
+            background: var(--primary);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 6px;
+            padding: 5px 14px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 32px;
+            white-space: nowrap;
+            transition: transform 0.15s;
+        }
+        .btn-sm-solid:active { transform: scale(0.95); }
+
+        .company-dropdown-wrap {
+            position: relative;
+        }
+        .company-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            min-width: 200px;
+            z-index: 100;
+            display: none;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+        .company-dropdown.show { display: block; }
+        .company-dropdown .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 10px 14px;
+            text-align: left;
+            background: none;
+            border: none;
+            color: #eee;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.15s;
+        }
+        .company-dropdown .dropdown-item:hover { background: #333; }
+        .company-dropdown .dropdown-item.active-item { color: var(--primary); }
+        .company-dropdown .dropdown-divider {
+            height: 1px;
+            background: #444;
+            margin: 4px 0;
+        }
+        .company-dropdown .dropdown-item.new-company-item {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: #222;
+            border-radius: 12px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            width: min(90%, 380px);
+            border: 1px solid #444;
+        }
+        .modal-box h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .modal-box input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            border: 1px solid #555;
+            background: #333;
+            color: var(--text-light);
+            min-height: 42px;
+            outline: none;
+            margin-bottom: 1rem;
+        }
+        .modal-box input:focus { border-color: var(--primary); }
+        .modal-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .modal-actions button { flex: 1; }
+
+        /* ===== APP CONTAINER ===== */
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: clamp(0.75rem, 3vw, 1.5rem);
+            display: grid;
+            gap: clamp(1rem, 3vw, 1.5rem);
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: clamp(1rem, 3vw, 1.5rem);
+            border: 1px solid #333;
+        }
+        .card h2 {
+            font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.75rem;
+        }
+        .card h2 .icon { font-size: 1.2rem; }
+        .card-header-clickable {
+            cursor: pointer;
+            user-select: none;
+        }
+        .card-header-clickable:active { opacity: 0.7; }
+        .toggle-arrow {
+            margin-left: auto;
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
+        .toggle-arrow.open { transform: rotate(180deg); }
+        .collapse-body { display: none; }
+        .collapse-body.open { display: block; }
+
+        .form-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+        .form-row .form-group {
+            flex: 1;
+            min-width: 140px;
+        }
+        .form-row .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .form-row .form-group input,
+        .form-row .form-group select {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            border: 1px solid #555;
+            background: #333;
+            color: var(--text-light);
+            min-height: 40px;
+            outline: none;
+        }
+        .form-row .form-group select option { background: #333; }
+        .form-row .form-group input:focus,
+        .form-row .form-group select:focus { border-color: var(--primary); }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            min-height: 40px;
+            padding-top: 1.1rem;
+        }
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: #ccc;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+        .iva-badge {
+            font-size: 0.6rem;
+            background: #e67e22;
+            color: #fff;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 40px;
+            white-space: nowrap;
+            transition: transform 0.15s;
+        }
+        .btn-add:active { transform: scale(0.95); }
+        .btn-danger-sm {
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            min-height: 28px;
+        }
+
+        .empty-msg {
+            color: #666;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .item-list { display: grid; gap: 0.35rem; margin-top: 0.5rem; }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2a2a2a;
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .item-row .item-name { font-weight: 600; color: #eee; }
+        .item-row .price { color: #2ecc71; font-weight: 700; }
+        .item-row .empresa-tag {
+            font-size: 0.7rem;
+            color: #aaa;
+            background: #333;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* ===== COMPARISON ===== */
+        .comparison-block { margin-top: 0.75rem; }
+        .comparison-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            padding: 4px 0;
+            border-bottom: 1px solid #444;
+        }
+        .comparison-bars { display: grid; gap: 0.5rem; }
+        .c-bar-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 55px;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.78rem;
+        }
+        .c-bar-row .c-label {
+            color: #ccc;
+            text-align: right;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .c-bar-row .c-track {
+            height: 20px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .c-bar-row .c-fill {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding-left: 5px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #000;
+            transition: width 0.4s ease;
+        }
+        .c-bar-row .c-price {
+            font-weight: 700;
+            color: #eee;
+            text-align: right;
+        }
+        .fill-best { background: #2ecc71; }
+        .fill-other { background: var(--primary); }
+        .best-tag {
+            display: inline-block;
+            background: #2ecc71;
+            color: #fff;
+            font-size: 0.55rem;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-weight: 700;
+            margin-left: 3px;
+        }
+
+        .empresa-total {
+            margin-top: 0.75rem;
+            text-align: right;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            border-top: 1px solid #444;
+            padding-top: 0.75rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-row { flex-direction: column; }
+            .form-row .form-group { min-width: 100%; }
+            .c-bar-row { grid-template-columns: 80px 1fr 45px; font-size: 0.7rem; }
+            .app-header h1 { font-size: 0.8rem; }
+            .logo-round { width: 34px; height: 34px; }
+            .btn-power { width: 34px; height: 34px; }
+            .btn-power svg { width: 16px; height: 16px; }
+        }
+    </style>
+</head>
+<body class="app-page">
+
+    <!-- ===== HEADER ===== -->
+    <header class="app-header">
+        <img src="img/descarga.png" alt="PYP" class="logo-round">
+        <h1>Tornillos y Herramientas PYP</h1>
+        <button class="btn-power" id="btn-logout" title="Cerrar sesión">
+            <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.59-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+        </button>
+    </header>
+
+    <!-- ===== COMPANY BAR ===== -->
+    <div class="company-bar" id="company-bar">
+        <div id="company-info-display">
+            <span class="no-company">Sin empresa seleccionada</span>
+        </div>
+        <div class="right-actions">
+            <button class="btn-sm-solid" id="btn-select-company">Seleccionar</button>
+        </div>
+    </div>
+
+    <!-- ===== COMPANY DROPDOWN ===== -->
+    <div class="company-dropdown-wrap" style="position:relative;max-width:900px;margin:0 auto;padding:0 1rem;">
+        <div class="company-dropdown" id="company-dropdown"></div>
+    </div>
+
+    <!-- ===== MODAL (nueva empresa) ===== -->
+    <div class="modal-overlay" id="modal-empresa">
+        <div class="modal-box">
+            <h3>➕ Nueva Empresa</h3>
+            <input type="text" id="input-nueva-empresa" placeholder="Nombre de la empresa" autofocus>
+            <div class="modal-actions">
+                <button class="btn-add" id="btn-guardar-empresa">Guardar</button>
+                <button class="btn-sm-outline" id="btn-cancelar-empresa" style="flex:1;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="app-container">
+
+        <!-- Product Form -->
+        <div class="card">
+            <h2><span class="icon">📦</span> Agregar Producto</h2>
+            <div id="product-form-area">
+                <div class="empty-msg" style="color:#888;">Selecciona o crea una empresa primero.</div>
+            </div>
+        </div>
+
+        <!-- Comparison (hidden by default, shown when there are products to compare) -->
+        <div class="card" id="comparativa-card" style="display:none;">
+            <h2><span class="icon">📊</span> Comparativa de Precios</h2>
+            <div id="comparativa-container"></div>
+        </div>
+
+        <!-- Products List (collapsible) -->
+        <div class="card">
+            <h2 class="card-header-clickable" id="productos-header">
+                <span class="icon">📋</span> Productos
+                <span class="toggle-arrow" id="productos-arrow">▼</span>
+            </h2>
+            <div class="collapse-body" id="productos-body">
+                <div id="productos-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- ===== FIREBASE SDKs ===== -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        // ===== FIREBASE =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyAs1VbxixHJxl58B3xLeemlkDsuEVTfWTs",
+            authDomain: "authenticationpyp.firebaseapp.com",
+            projectId: "authenticationpyp",
+            storageBucket: "authenticationpyp.firebasestorage.app",
+            messagingSenderId: "419339169064",
+            appId: "1:419339169064:web:2b600685416be11866741d"
+        }
+        firebase.initializeApp(firebaseConfig)
+        const auth = firebase.auth()
+        const db = firebase.firestore()
+
+        // ===== STATE =====
+        var currentUser = null
+        var empresas = []
+        var productos = []
+        var empresaActivaId = null
+        var dropdownOpen = false
+
+        // ===== TOAST =====
+        function toast(msg) {
+            var t = document.getElementById('toast')
+            if (!t) return
+            t.textContent = msg
+            t.classList.add('show')
+            setTimeout(function () { t.classList.remove('show') }, 3000)
+        }
+
+        // ===== AUTH =====
+        auth.onAuthStateChanged(function (user) {
+            if (!user) { window.location.href = 'login.html'; return }
+            currentUser = user
+            cargarDatos()
+        })
+
+        document.getElementById('btn-logout').addEventListener('click', function () {
+            auth.signOut()
+        })
+
+        // ===== LOAD DATA =====
+        function cargarDatos() {
+            Promise.all([
+                db.collection('empresas').where('userId', '==', currentUser.uid).get(),
+                db.collection('productos').where('userId', '==', currentUser.uid).get()
+            ]).then(function (results) {
+                empresas = []
+                results[0].forEach(function (d) { var x = d.data(); x.id = d.id; empresas.push(x) })
+                productos = []
+                results[1].forEach(function (d) { var x = d.data(); x.id = d.id; productos.push(x) })
+
+                // If active company was deleted, reset
+                if (empresaActivaId && !empresas.find(function (e) { return e.id === empresaActivaId })) {
+                    empresaActivaId = null
+                }
+
+                renderCompanyBar()
+                renderProductForm()
+                renderProductos()
+            }).catch(function (e) { console.error(e); toast('Error al cargar datos') })
+        }
+
+        // ===== ESCAPE HTML =====
+        function esc(str) {
+            var d = document.createElement('div')
+            d.textContent = str
+            return d.innerHTML
+        }
+
+        // ===== COMPANY BAR & DROPDOWN =====
+        function renderCompanyBar() {
+            var display = document.getElementById('company-info-display')
+            var actionBtn = document.getElementById('btn-select-company')
+
+            if (empresaActivaId) {
+                var emp = empresas.find(function (e) { return e.id === empresaActivaId })
+                if (emp) {
+                    display.innerHTML = '<span class="company-info"><span class="emp-icon">🏢</span> ' + esc(emp.nombre) + '</span>'
+                } else {
+                    display.innerHTML = '<span class="no-company">Sin empresa seleccionada</span>'
+                    empresaActivaId = null
+                }
+            } else {
+                display.innerHTML = '<span class="no-company">Sin empresa seleccionada</span>'
+            }
+            actionBtn.textContent = empresaActivaId ? 'Cambiar' : 'Seleccionar'
+            buildDropdown()
+        }
+
+        function buildDropdown() {
+            var dd = document.getElementById('company-dropdown')
+            var html = ''
+
+            empresas.forEach(function (e) {
+                var active = e.id === empresaActivaId ? ' active-item' : ''
+                html += '<button class="dropdown-item' + active + '" data-id="' + e.id + '">🏢 ' + esc(e.nombre) + '</button>'
+            })
+
+            if (empresas.length > 0) {
+                html += '<div class="dropdown-divider"></div>'
+            }
+
+            html += '<button class="dropdown-item new-company-item" id="dd-nueva-empresa">➕ Nueva empresa</button>'
+
+            dd.innerHTML = html
+
+            // Click handlers
+            dd.querySelectorAll('[data-id]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    empresaActivaId = this.getAttribute('data-id')
+                    closeDropdown()
+                    renderCompanyBar()
+                    renderProductForm()
+                    renderProductos()
+                    renderComparativa()
+                })
+            })
+
+            var nuevaBtn = dd.querySelector('#dd-nueva-empresa')
+            if (nuevaBtn) {
+                nuevaBtn.addEventListener('click', function () {
+                    closeDropdown()
+                    abrirModalEmpresa()
+                })
+            }
+        }
+
+        document.getElementById('btn-select-company').addEventListener('click', function () {
+            toggleDropdown()
+        })
+
+        function toggleDropdown() {
+            var dd = document.getElementById('company-dropdown')
+            dropdownOpen = !dropdownOpen
+            dd.classList.toggle('show', dropdownOpen)
+        }
+
+        function closeDropdown() {
+            var dd = document.getElementById('company-dropdown')
+            dropdownOpen = false
+            dd.classList.remove('show')
+        }
+
+        document.addEventListener('click', function (e) {
+            if (dropdownOpen && !e.target.closest('.company-bar') && !e.target.closest('.company-dropdown')) {
+                closeDropdown()
+            }
+        })
+
+        // ===== MODAL EMPRESA =====
+        function abrirModalEmpresa() {
+            document.getElementById('modal-empresa').classList.add('show')
+            document.getElementById('input-nueva-empresa').value = ''
+            document.getElementById('input-nueva-empresa').focus()
+        }
+
+        function cerrarModalEmpresa() {
+            document.getElementById('modal-empresa').classList.remove('show')
+        }
+
+        document.getElementById('btn-guardar-empresa').addEventListener('click', function () {
+            var nombre = document.getElementById('input-nueva-empresa').value.trim()
+            if (!nombre) { toast('Ingresa un nombre'); return }
+
+            db.collection('empresas').add({ nombre: nombre, userId: currentUser.uid })
+                .then(function (ref) {
+                    cerrarModalEmpresa()
+                    toast('Empresa creada')
+                    return cargarDatos()
+                })
+                .then(function () {
+                    empresaActivaId = (empresas.find(function (e) { return e.nombre.toLowerCase() === nombre.toLowerCase() }) || {}).id
+                    renderCompanyBar()
+                    renderProductForm()
+                    renderProductos()
+                    renderComparativa()
+                })
+                .catch(function (e) { toast('Error: ' + e.message) })
+        })
+
+        document.getElementById('btn-cancelar-empresa').addEventListener('click', cerrarModalEmpresa)
+        document.getElementById('modal-empresa').addEventListener('click', function (e) {
+            if (e.target === this) cerrarModalEmpresa()
+        })
+
+        document.getElementById('input-nueva-empresa').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') document.getElementById('btn-guardar-empresa').click()
+        })
+
+        // ===== PRODUCTOS COLLAPSE =====
+        document.getElementById('productos-header').addEventListener('click', function () {
+            var body = document.getElementById('productos-body')
+            var arrow = document.getElementById('productos-arrow')
+            body.classList.toggle('open')
+            arrow.classList.toggle('open')
+        })
+
+        // ===== PRODUCT FORM =====
+        function renderProductForm() {
+            var area = document.getElementById('product-form-area')
+            if (!empresaActivaId) {
+                area.innerHTML = '<div class="empty-msg" style="color:#888;">Selecciona o crea una empresa primero.</div>'
+                return
+            }
+
+            // Build unique product names for datalist
+            var nombresUnicos = {}
+            productos.forEach(function (p) { nombresUnicos[p.nombre] = true })
+            var opciones = ''
+            for (var nom in nombresUnicos) {
+                opciones += '<option value="' + esc(nom) + '">'
+            }
+
+            area.innerHTML =
+                '<div class="form-row">' +
+                '  <div class="form-group" style="flex-basis:100%;">' +
+                '    <label for="prod-name">Producto</label>' +
+                '    <input type="text" id="prod-name" placeholder="Ej: Tornillo 1/4" list="prod-sugerencias">' +
+                '    <datalist id="prod-sugerencias">' + opciones + '</datalist>' +
+                '  </div>' +
+                '  <div style="display:flex;gap:0.5rem;align-items:end;width:100%;">' +
+                '    <div style="flex:1;">' +
+                '      <label for="prod-price">Precio ($)</label>' +
+                '      <input type="number" id="prod-price" placeholder="0.00" step="0.01" min="0" style="width:100%;padding:8px 10px;font-size:0.85rem;border-radius:6px;border:1px solid #555;background:#333;color:#fff;min-height:40px;outline:none;">' +
+                '    </div>' +
+                '    <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:#ccc;font-weight:600;cursor:pointer;white-space:nowrap;padding-bottom:2px;">' +
+                '      <input type="checkbox" id="prod-iva" style="width:18px;height:18px;accent-color:#f9c119;cursor:pointer;"> + IVA (19%)' +
+                '    </label>' +
+                '  </div>' +
+                '</div>' +
+                '<div style="display:flex;justify-content:center;margin-top:0.75rem;">' +
+                '  <button class="btn-add" id="btn-add-prod" style="width:100%;max-width:300px;">Agregar</button>' +
+                '</div>'
+
+            document.getElementById('btn-add-prod').addEventListener('click', agregarProducto)
+            document.getElementById('prod-price').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') agregarProducto()
+            })
+        }
+
+        function agregarProducto() {
+            var nombre = document.getElementById('prod-name').value.trim()
+            var precioBase = parseFloat(document.getElementById('prod-price').value)
+            var conIva = document.getElementById('prod-iva').checked
+            var precio = conIva ? precioBase * 1.19 : precioBase
+
+            if (!nombre) { toast('Ingresa el nombre del producto'); return }
+            if (isNaN(precioBase) || precioBase <= 0) { toast('Ingresa un precio válido'); return }
+            if (conIva) {
+                toast('Precio + IVA: $' + precioBase.toFixed(2) + ' → Total: $' + precio.toFixed(2))
+            }
+
+            var emp = empresas.find(function (e) { return e.id === empresaActivaId })
+            if (!emp) { toast('Selecciona una empresa'); return }
+
+            // Check if product already exists for this company
+            var existente = productos.find(function (p) {
+                return p.empresaId === empresaActivaId && p.nombre.toLowerCase() === nombre.toLowerCase()
+            })
+
+            var p
+            if (existente) {
+                if (!confirm('¿Actualizar precio de "' + nombre + '" de $' + existente.precio + ' a $' + precio + '?')) return
+                p = db.collection('productos').doc(existente.id).update({ precio: precio, conIva: conIva })
+            } else {
+                p = db.collection('productos').add({
+                    nombre: nombre,
+                    empresaId: empresaActivaId,
+                    empresaNombre: emp.nombre,
+                    precio: precio,
+                    conIva: conIva,
+                    userId: currentUser.uid
+                })
+            }
+
+            p.then(function () {
+                document.getElementById('prod-name').value = ''
+                document.getElementById('prod-price').value = ''
+                document.getElementById('prod-iva').checked = false
+                toast('Producto guardado')
+                cargarDatos()
+
+                // Check if this product exists in other companies → show comparison
+                var nombreLower = nombre.toLowerCase()
+                var enOtrasEmpresas = productos.some(function (prod) {
+                    return prod.empresaId !== empresaActivaId && prod.nombre.toLowerCase() === nombreLower
+                })
+                if (enOtrasEmpresas) {
+                    mostrarComparativa(nombreLower)
+                }
+            }).catch(function (e) { toast('Error: ' + e.message) })
+        }
+
+        function eliminarProducto(id) {
+            if (!confirm('¿Eliminar este producto?')) return
+            db.collection('productos').doc(id).delete()
+                .then(function () { toast('Producto eliminado'); cargarDatos() })
+                .catch(function (e) { toast('Error: ' + e.message) })
+        }
+
+        // ===== RENDER PRODUCTOS =====
+        function renderProductos() {
+            var container = document.getElementById('productos-list')
+
+            if (!empresaActivaId) {
+                container.innerHTML = '<div class="empty-msg">Selecciona una empresa para ver sus productos.</div>'
+                return
+            }
+
+            var items = productos.filter(function (p) { return p.empresaId === empresaActivaId })
+            items.sort(function (a, b) { return a.nombre.localeCompare(b.nombre) })
+            if (items.length === 0) {
+                container.innerHTML = '<div class="empty-msg">No hay productos para esta empresa.</div>'
+                return
+            }
+
+            var total = 0
+            var html = '<div class="item-list">'
+            items.forEach(function (p) {
+                total += p.precio
+                var ivaTag = p.conIva ? '<span class="iva-badge">+IVA</span>' : ''
+                html += '<div class="item-row">' +
+                    '<span class="item-name">' + esc(p.nombre) + ivaTag + '</span>' +
+                    '<div style="display:flex;align-items:center;gap:0.5rem;">' +
+                    '<span class="price">$' + p.precio.toFixed(2) + '</span>' +
+                    '<button class="btn-danger-sm" onclick="eliminarProducto(\'' + p.id + '\')">✕</button>' +
+                    '</div></div>'
+            })
+            html += '</div>'
+            html += '<div class="empresa-total">Total: $' + total.toFixed(2) + '</div>'
+
+            container.innerHTML = html
+        }
+
+        // ===== MOSTRAR COMPARATIVA (solo cuando se agrega producto duplicado) =====
+        function mostrarComparativa(nombreLower) {
+            var card = document.getElementById('comparativa-card')
+            var container = document.getElementById('comparativa-container')
+
+            var items = productos.filter(function (p) {
+                return p.nombre.toLowerCase() === nombreLower
+            })
+
+            var empresasUnicas = {}
+            items.forEach(function (i) { empresasUnicas[i.empresaId] = true })
+            var numEmpresas = Object.keys(empresasUnicas).length
+
+            if (numEmpresas < 2) {
+                card.style.display = 'none'
+                return
+            }
+
+            var displayName = items[0].nombre
+            var maxPrice = Math.max.apply(null, items.map(function (i) { return i.precio }))
+            var minPrice = Math.min.apply(null, items.map(function (i) { return i.precio }))
+
+            items.sort(function (a, b) { return a.precio - b.precio })
+
+            var html = '<div class="comparison-block">'
+            html += '<div class="comparison-title">' + esc(displayName) + '</div>'
+            html += '<div class="comparison-bars">'
+
+            items.forEach(function (p) {
+                var pct = maxPrice > 0 ? (p.precio / maxPrice * 100) : 0
+                var isBest = p.precio === minPrice
+                var barClass = isBest ? 'fill-best' : 'fill-other'
+                var tag = isBest ? '<span class="best-tag">MEJOR</span>' : ''
+
+                var ivaTag2 = p.conIva ? ' <span class="iva-badge" style="font-size:0.5rem;">+IVA</span>' : ''
+                html += '<div class="c-bar-row">' +
+                    '<span class="c-label" title="' + esc(p.empresaNombre) + '">' + esc(p.empresaNombre) + ivaTag2 + '</span>' +
+                    '<div class="c-track"><div class="c-fill ' + barClass + '" style="width:' + pct + '%">' + tag + '</div></div>' +
+                    '<span class="c-price">$' + p.precio.toFixed(2) + '</span>' +
+                    '</div>'
+            })
+
+            html += '</div></div>'
+
+            card.style.display = 'block'
+            container.innerHTML = html
+
+            // Scroll to the comparison card
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+    </script>
+</body>
+</html>
