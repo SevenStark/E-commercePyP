@@ -13,13 +13,59 @@ const firebaseConfig = {
     measurementId: "G-81LVDTKB0F"
 }
 
-firebase.initializeApp(firebaseConfig)
-const auth = firebase.auth()
+var auth = null
+if (typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig)
+    auth = firebase.auth()
+}
 
 // ===========================
 // DOM Ready
 // ===========================
 document.addEventListener('DOMContentLoaded', function () {
+
+    // === Hero Carousel ===
+    var carousel = document.getElementById('hero-carousel')
+    var slides = carousel ? carousel.querySelectorAll('.carousel-slide') : []
+    var currentSlide = 0
+    var autoplayInterval = null
+
+    if (slides.length > 0) {
+        function goToSlide(index) {
+            slides.forEach(function (s, i) {
+                s.classList.toggle('active', i === index)
+            })
+            currentSlide = index
+        }
+
+        function nextSlide() {
+            goToSlide((currentSlide + 1) % slides.length)
+        }
+
+        function prevSlide() {
+            goToSlide((currentSlide - 1 + slides.length) % slides.length)
+        }
+
+        function startAutoplay() {
+            stopAutoplay()
+            autoplayInterval = setInterval(nextSlide, 5000)
+        }
+
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval)
+                autoplayInterval = null
+            }
+        }
+
+        var prevBtn = document.getElementById('carousel-prev')
+        var nextBtn = document.getElementById('carousel-next')
+
+        if (prevBtn) prevBtn.addEventListener('click', function () { stopAutoplay(); prevSlide(); startAutoplay() })
+        if (nextBtn) nextBtn.addEventListener('click', function () { stopAutoplay(); nextSlide(); startAutoplay() })
+
+        startAutoplay()
+    }
 
     // === Menu Overlay (Hamburguesa) ===
     var menuBtn = document.getElementById('menu-btn')
@@ -81,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var whatsappLink = document.getElementById('whatsapp-link')
     if (whatsappLink) {
         whatsappLink.addEventListener('click', function (e) {
-            var phone = 'XXXXXXXXXX'
+            var phone = '3134140072'
             var message = encodeURIComponent('Hola, quiero información sobre sus productos.')
             this.href = 'https://wa.me/' + phone + '?text=' + message
         })

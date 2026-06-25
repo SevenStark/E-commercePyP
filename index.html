@@ -55,38 +55,67 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero Carousel -->
     <section class="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-            <span class="hero-badge">CALIDAD INDUSTRIAL</span>
-            <h1>TORNILLOS<br>Y HERRAMIENTAS</h1>
-            <p>Todo lo que necesitas para tus proyectos <br class="hide-mobile">al mejor precio del mercado</p>
-            <div class="hero-cta">
-                <a href="#tornillos" class="hero-btn primary">VER CATÁLOGO</a>
-                <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
+        <div class="hero-carousel" id="hero-carousel">
+            <div class="carousel-slide active" style="background-image: url('img/slider1.jpg');">
+                <div class="hero-content">
+                    <span class="hero-badge">CALIDAD INDUSTRIAL</span>
+                    <h1>TORNILLOS<br>Y HERRAMIENTAS</h1>
+                    <p>Todo lo que necesitas para tus proyectos <br class="hide-mobile">al mejor precio del mercado</p>
+                    <div class="hero-cta">
+                        <a href="#tornillos" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-slide" style="background-image: url('img/slider2.jpg');">
+                <div class="hero-content">
+                    <span class="hero-badge">HERRAMIENTAS PROFESIONALES</span>
+                    <h1>TALADROS<br>Y PULIDORAS</h1>
+                    <p>Equipos de las mejores marcas <br class="hide-mobile">para tu taller o industria</p>
+                    <div class="hero-cta">
+                        <a href="#herramientas" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-slide" style="background-image: url('img/slider3.jpg');">
+                <div class="hero-content">
+                    <span class="hero-badge">MAQUINARIA PESADA</span>
+                    <h1>COMPRESORES<br>Y SOLDADURA</h1>
+                    <p>Equipos industriales para trabajos exigentes <br class="hide-mobile">con la mejor relación calidad-precio</p>
+                    <div class="hero-cta">
+                        <a href="#maquinaria" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-slide" style="background-image: url('img/slider4.jpg');">
+                <div class="hero-content">
+                    <span class="hero-badge">HOGAR Y CONSTRUCCIÓN</span>
+                    <h1>HIDROLAVADORAS<br>E INVERSORES</h1>
+                    <p>Todo para el hogar y la obra <br class="hide-mobile">en un solo lugar</p>
+                    <div class="hero-cta">
+                        <a href="#hogar" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-slide" style="background-image: url('img/slider5.jpg');">
+                <div class="hero-content">
+                    <span class="hero-badge">OFERTAS ESPECIALES</span>
+                    <h1>DESCUENTOS<br>POR VOLUMEN</h1>
+                    <p>Compra al por mayor y obtén los mejores precios <br class="hide-mobile">en tornillería y herramientas</p>
+                    <div class="hero-cta">
+                        <a href="#tornillos" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
-
-    <!-- Quick Categories -->
-    <section class="quick-cats">
-        <a href="#tornillos" class="quick-cat active">
-            <img src="img/tornillo.png" alt="Tornillos">
-            <span>Tornillos</span>
-        </a>
-        <a href="#herramientas" class="quick-cat">
-            <img src="img/taladro-de-mano.png" alt="Herramientas">
-            <span>Herramientas</span>
-        </a>
-        <a href="#maquinaria" class="quick-cat">
-            <img src="img/taladro.png" alt="Maquinaria">
-            <span>Maquinaria</span>
-        </a>
-        <a href="#hogar" class="quick-cat">
-            <img src="img/tornillotarjeta.png" alt="Hogar">
-            <span>Hogar</span>
-        </a>
+        <button class="carousel-arrow prev" id="carousel-prev">&#10094;</button>
+        <button class="carousel-arrow next" id="carousel-next">&#10095;</button>
     </section>
 
     <!-- Main Content -->
@@ -100,57 +129,7 @@
                 </div>
             </div>
             <div class="property-form">
-                <div class="form-row-double">
-                    <div class="form-group">
-                        <label for="cantidad">Cantidad</label>
-                        <input id="cantidad" class="cantidad" placeholder="0">
-                    </div>
-                    <div class="form-group">
-                        <label for="tipocabeza">Tipo de cabeza</label>
-                        <select id="tipocabeza" class="tipocabeza">
-                            <option>Hexagonal</option>
-                            <option>Bristol</option>
-                            <option>Destornillador estrella</option>
-                            <option>Carriaje</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row-double">
-                    <div class="form-group">
-                        <label for="grosor">Grosor</label>
-                        <select id="grosor" class="grosor">
-                            <option>5/32</option><option>4mm</option><option>3/16</option><option>5mm</option>
-                            <option>1/4</option><option>6mm</option><option>5/16</option><option>7mm</option>
-                            <option>3/8</option><option>8mm</option><option>7/16</option><option>10mm</option>
-                            <option>1/2</option><option>12mm</option><option>5/8</option><option>14mm</option>
-                            <option>1"</option><option>16mm</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="largor">Largo</label>
-                        <select id="largor" class="largor">
-                            <option>1/2</option><option>3/4</option><option>1</option><option>1-1/4</option>
-                            <option>1-1/2</option><option>2</option><option>2-1/2</option><option>3</option>
-                            <option>3-1/2</option><option>4</option><option>4-1/2</option><option>5</option>
-                            <option>5-1/2</option><option>6</option><option>6-1/2</option><option>7</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row-double">
-                    <div class="form-group">
-                        <label for="rosca">Rosca</label>
-                        <select id="rosca" class="rosca">
-                            <option>Rosca ordinaria</option><option>Rosca Fina</option>
-                            <option>1.25</option><option>1.5</option><option>1.75</option><option>2</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="resistencia">Grado resistencia</label>
-                        <select id="resistencia" class="resistencia">
-                            <option>Grado 2</option><option>Grado 5</option><option>Grado 8</option><option>Caterpillar</option>
-                        </select>
-                    </div>
-                </div>
+                <img src="img/tornillos.png" alt="Tornillos" class="property-img property-img-lg">
                 <button class="btn">ORDENAR</button>
             </div>
         </section>
@@ -164,49 +143,7 @@
                 </div>
             </div>
             <div class="property-form">
-                <div class="form-group">
-                    <label for="destornillador">Destornilladores</label>
-                    <select id="destornillador">
-                        <option>Estrella 3/16 (3")</option><option>Estrella 3/16 (4")</option><option>Estrella 3/16 (5")</option>
-                        <option>Estrella 1/4 (3")</option><option>Estrella 1/4 (5")</option><option>Estrella 1/4 (6")</option>
-                        <option>Estrella 5/16 (4")</option><option>Estrella 5/16 (6")</option>
-                        <option>Pala 3/16 (3")</option><option>Pala 3/16 (4")</option><option>Pala 3/16 (5")</option>
-                        <option>Pala 1/4 (3")</option><option>Pala 1/4 (4")</option><option>Pala 1/4 (5")</option>
-                        <option>Pala 5/16 (4")</option><option>Pala 5/16 (5")</option>
-                    </select>
-                </div>
-                <div class="form-row-double">
-                    <div class="form-group">
-                        <label for="llaves-espancivas">Llaves españolas</label>
-                        <select id="llaves-espancivas">
-                            <option>6"</option><option>7"</option><option>8"</option><option>9"</option><option>12"</option><option>15"</option><option>18"</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="llaves-mixtas">Llaves mixtas</label>
-                        <select id="llaves-mixtas">
-                            <option>5/32</option><option>4mm</option><option>3/16</option><option>5mm</option>
-                            <option>1/4</option><option>6mm</option><option>5/16</option><option>7mm</option>
-                            <option>3/8</option><option>8mm</option><option>7/16</option><option>10mm</option>
-                            <option>1/2</option><option>12mm</option><option>5/8</option><option>14mm</option>
-                            <option>1"</option><option>16mm</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row-double">
-                    <div class="form-group">
-                        <label for="llaves-tubo">Llaves de tubo</label>
-                        <select id="llaves-tubo">
-                            <option>6"</option><option>7"</option><option>8"</option><option>9"</option><option>12"</option><option>15"</option><option>18"</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="pinzas-pines">Pinzas para pines</label>
-                        <select id="pinzas-pines">
-                            <option>3"</option><option>4"</option><option>5"</option><option>6"</option><option>7"</option><option>9"</option><option>12"</option>
-                        </select>
-                    </div>
-                </div>
+                <img src="img/taladro.jpg" alt="Herramientas" class="property-img">
                 <button class="btn">ORDENAR</button>
             </div>
         </section>
@@ -220,31 +157,7 @@
                 </div>
             </div>
             <div class="property-form">
-                <div class="form-group">
-                    <label for="pulidoras">Pulidoras</label>
-                    <select id="pulidoras">
-                        <option>DeWalt 4½" 700W</option><option>Inco 4½" 600W</option><option>Discover 4½" 700W</option>
-                        <option>NewBet 4½" 700W</option><option>Ranger 4½"</option>
-                        <option>DeWalt 7" 1400W</option><option>Inco 7" 1200W</option>
-                        <option>Discover 7" 1200W</option><option>NewBet 7" 1200W</option><option>Ranger 7"</option>
-                    </select>
-                </div>
-                <div class="form-row-double">
-                    <div class="form-group">
-                        <label for="taladros">Taladros</label>
-                        <select id="taladros">
-                            <option>DeWalt ⅜" 400W</option><option>Inco ⅜" 300W</option><option>Discover ⅜" 400W</option>
-                            <option>NewBet ⅜" 300W</option>
-                            <option>Inco inalámbrico ⅜"</option><option>Discover inalámbrico ⅜"</option><option>NewBet inalámbrico ⅜"</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="lijadoras">Lijadoras</label>
-                        <select id="lijadoras">
-                            <option>Inco</option><option>DeWalt</option><option>Discover</option><option>Dawflow</option><option>NewBet</option>
-                        </select>
-                    </div>
-                </div>
+                <img src="img/EQUIPOS-DE-SOLDADURA-ELECTRICA-SOLDADORES-PARA-ELECTRODO-REVESTIDO-SOLDADOR-INVERSOR-160A-CARETEANTORCHA-1511920240416234102.jpg" alt="Maquinaria" class="property-img">
                 <button class="btn">ORDENAR</button>
             </div>
         </section>
@@ -258,20 +171,7 @@
                 </div>
             </div>
             <div class="property-form">
-                <div class="form-row-double">
-                    <div class="form-group">
-                        <label for="hidrolavadoras">Hidrolavadoras</label>
-                        <select id="hidrolavadoras">
-                            <option>Inco</option><option>Black & Decker</option><option>Wilker</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="inversores">Inversores de soldadura</label>
-                        <select id="inversores">
-                            <option>Lincoln</option><option>Inverrr</option><option>TIG y MIG</option>
-                        </select>
-                    </div>
-                </div>
+                <img src="img/inversor.png" alt="Hogar y Construcción" class="property-img">
                 <button class="btn">ORDENAR</button>
             </div>
         </section>
@@ -282,7 +182,7 @@
         <div class="footer-inner">
             <div class="footer-brand">
                 <img src="img/descarga.png" alt="PYP">
-                <p>PYP Tornillos y Herramientas — Calidad y confianza desde 2020.</p>
+                <p>PYP Tornillos y Herramientas — Calidad y confianza desde 2005.</p>
             </div>
             <div class="footer-links">
                 <a href="#tornillos">Tornillos</a>
@@ -308,14 +208,14 @@
                 </a>
             </li>
             <li>
-                <a href="#tornillos" class="nav-link" data-scroll>
-                    <img src="img/tornillo.png" alt="Tornillos">
-                    <span class="nav-label">TORNILLOS</span>
+                <a href="https://maps.google.com/?q=Tornillería+PYP" target="_blank" class="nav-link">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    <span class="nav-label">UBICACIÓN</span>
                 </a>
             </li>
             <li>
                 <a href="login.html" class="nav-link">
-                    <img src="img/icono.ico" alt="Perfil">
+                    <img class="logoico" src="img/icono.ico" alt="Perfil">
                     <span class="nav-label">PERFIL</span>
                 </a>
             </li>
