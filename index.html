@@ -64,7 +64,7 @@
                     <h1>TORNILLOS<br>Y HERRAMIENTAS</h1>
                     <p>Todo lo que necesitas para tus proyectos <br class="hide-mobile">al mejor precio del mercado</p>
                     <div class="hero-cta">
-                        <a href="#tornillos" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="catalogo.html" class="hero-btn primary">VER CATÁLOGO</a>
                         <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                     <h1>TALADROS<br>Y PULIDORAS</h1>
                     <p>Equipos de las mejores marcas <br class="hide-mobile">para tu taller o industria</p>
                     <div class="hero-cta">
-                        <a href="#herramientas" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="catalogo.html#cat-herramientas" class="hero-btn primary">VER CATÁLOGO</a>
                         <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                     <h1>COMPRESORES<br>Y SOLDADURA</h1>
                     <p>Equipos industriales para trabajos exigentes <br class="hide-mobile">con la mejor relación calidad-precio</p>
                     <div class="hero-cta">
-                        <a href="#maquinaria" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="catalogo.html#cat-maquinaria" class="hero-btn primary">VER CATÁLOGO</a>
                         <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                     <h1>HIDROLAVADORAS<br>E INVERSORES</h1>
                     <p>Todo para el hogar y la obra <br class="hide-mobile">en un solo lugar</p>
                     <div class="hero-cta">
-                        <a href="#hogar" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="catalogo.html#cat-hogar" class="hero-btn primary">VER CATÁLOGO</a>
                         <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
                     </div>
                 </div>
@@ -108,7 +108,7 @@
                     <h1>DESCUENTOS<br>POR VOLUMEN</h1>
                     <p>Compra al por mayor y obtén los mejores precios <br class="hide-mobile">en tornillería y herramientas</p>
                     <div class="hero-cta">
-                        <a href="#tornillos" class="hero-btn primary">VER CATÁLOGO</a>
+                        <a href="catalogo.html#cat-tornillos" class="hero-btn primary">VER CATÁLOGO</a>
                         <a href="https://wa.me/" target="_blank" class="hero-btn secondary">COTIZAR AHORA</a>
                     </div>
                 </div>
@@ -129,8 +129,8 @@
                 </div>
             </div>
             <div class="property-form">
-                <img src="img/tornillos.png" alt="Tornillos" class="property-img property-img-lg">
-                <button class="btn">ORDENAR</button>
+                <div class="prod-grid" id="grid-tornillos"></div>
+                <a href="tornillos.html" class="btn">VER MÁS</a>
             </div>
         </section>
 
@@ -143,8 +143,8 @@
                 </div>
             </div>
             <div class="property-form">
-                <img src="img/taladro.jpg" alt="Herramientas" class="property-img">
-                <button class="btn">ORDENAR</button>
+                <div class="prod-grid" id="grid-herramientas"></div>
+                <a href="herramientas.html" class="btn">VER MÁS</a>
             </div>
         </section>
 
@@ -157,8 +157,8 @@
                 </div>
             </div>
             <div class="property-form">
-                <img src="img/EQUIPOS-DE-SOLDADURA-ELECTRICA-SOLDADORES-PARA-ELECTRODO-REVESTIDO-SOLDADOR-INVERSOR-160A-CARETEANTORCHA-1511920240416234102.jpg" alt="Maquinaria" class="property-img">
-                <button class="btn">ORDENAR</button>
+                <div class="prod-grid" id="grid-maquinaria"></div>
+                <a href="maquinaria.html" class="btn">VER MÁS</a>
             </div>
         </section>
 
@@ -171,11 +171,47 @@
                 </div>
             </div>
             <div class="property-form">
-                <img src="img/inversor.png" alt="Hogar y Construcción" class="property-img">
-                <button class="btn">ORDENAR</button>
+                <div class="prod-grid" id="grid-hogar"></div>
+                <a href="hogar.html" class="btn">VER MÁS</a>
             </div>
         </section>
     </main>
+
+    <!-- Product Modal -->
+    <div class="prod-modal" id="prod-modal">
+        <div class="prod-modal-content">
+            <button class="prod-modal-close" id="prod-modal-close">&times;</button>
+            <img id="modal-img" src="" alt="" class="prod-modal-img">
+            <div class="prod-modal-body">
+                <h3 id="modal-title"></h3>
+                <p class="prod-modal-desc" id="modal-desc"></p>
+                <p class="prod-modal-price" id="modal-price"></p>
+                <button class="btn" id="modal-order">ORDENAR AL CARRITO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <div class="cart-fab" id="cart-fab">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.17 14.75l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4l-3.87 7H8.53L4.27 2H1v2h2l3.6 7.59L5.25 14c-.13.35-.25.74-.25 1.15 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25z"/></svg>
+        <span class="cart-fab-badge" id="cart-badge">0</span>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer-overlay" id="cart-overlay"></div>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3>Carrito de Compras</h3>
+            <button class="cart-drawer-close" id="cart-close">&times;</button>
+        </div>
+        <div class="cart-drawer-items" id="cart-items">
+            <div class="cart-empty">El carrito está vacío.</div>
+        </div>
+        <div class="cart-drawer-footer" id="cart-footer" style="display:none;">
+            <div class="cart-total" id="cart-total">Total: $0</div>
+            <button class="btn" id="cart-order">ORDENAR POR WHATSAPP</button>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -235,6 +271,8 @@
     </nav>
 
     <div id="toast" class="toast"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

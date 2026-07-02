@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario - Admin PYP</title>
+    <link rel="icon" href="img/icono.ico">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+        .inv-header {
+            background: var(--primary);
+            padding: 0.8rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .inv-header h1 {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            font-weight: 900;
+        }
+        .inv-header a {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        .inv-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: grid;
+            gap: 1.5rem;
+        }
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            border: 1px solid #333;
+        }
+        .card h2 {
+            font-size: 1rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.75rem;
+        }
+        .form-group {
+            margin-bottom: 0.75rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: #999;
+            font-weight: 700;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            border: 1px solid #555;
+            background: #333;
+            color: var(--text-light);
+            min-height: 42px;
+            outline: none;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+        }
+        .btn-add {
+            background: var(--primary);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 6px;
+            padding: 12px 28px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            min-height: 44px;
+            transition: transform 0.15s;
+        }
+        .btn-add:active { transform: scale(0.95); }
+        .btn-danger {
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            min-height: 28px;
+            font-weight: 700;
+        }
+        .inv-list { display: grid; gap: 0.5rem; }
+        .inv-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #2a2a2a;
+            padding: 0.6rem 0.75rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            flex-wrap: wrap;
+        }
+        .inv-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #111;
+            flex-shrink: 0;
+        }
+        .inv-item .info {
+            flex: 1;
+            min-width: 120px;
+        }
+        .inv-item .info .name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #eee;
+            text-transform: uppercase;
+        }
+        .inv-item .info .meta {
+            font-size: 0.7rem;
+            color: #999;
+        }
+        .inv-item .info .price {
+            font-size: 0.8rem;
+            color: #2ecc71;
+            font-weight: 700;
+        }
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #222;
+            color: var(--text-light);
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-left: 3px solid var(--primary);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 3000;
+            max-width: 90vw;
+            text-align: center;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .empty-msg { color: #666; font-size: 0.85rem; text-align: center; padding: 1rem; }
+        #auth-warning {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #999;
+        }
+        #auth-warning a { color: var(--primary); font-weight: 700; }
+        @media (min-width: 768px) {
+            .inv-container { padding: 2rem; }
+            .inv-item { padding: 0.75rem 1rem; }
+            .inv-item img { width: 50px; height: 50px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="inv-header">
+        <a href="inicio.html" style="text-decoration:none;font-size:1.3rem;">&#8592;</a>
+        <h1>📦 INVENTARIO</h1>
+        <a href="index.html" target="_blank">Ver tienda</a>
+    </header>
+
+    <div id="auth-warning">
+        <p>Verificando sesión...</p>
+    </div>
+
+    <div class="inv-container" id="inv-app" style="display:none;">
+        <!-- Add Product -->
+        <div class="card">
+            <h2>Agregar Producto</h2>
+            <form id="product-form">
+                <div class="form-group">
+                    <label>URL de la imagen</label>
+                    <input type="text" id="field-img" placeholder="https://ejemplo.com/imagen.jpg" required>
+                </div>
+                <div class="form-group">
+                    <label>Nombre del producto</label>
+                    <input type="text" id="field-nombre" placeholder="ej: PERNO HEXAGONAL 1/4" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción breve</label>
+                    <input type="text" id="field-desc" placeholder="ej: Grado 2 - Rosca ordinaria" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio ($)</label>
+                    <input type="number" id="field-precio" placeholder="0" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="field-categoria">
+                        <option value="tornillos">Tornillería</option>
+                        <option value="herramientas">Herramientas</option>
+                        <option value="maquinaria">Maquinaria</option>
+                        <option value="hogar">Hogar y Construcción</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-add">AGREGAR PRODUCTO</button>
+            </form>
+        </div>
+
+        <!-- Product List -->
+        <div class="card">
+            <h2>Productos en Inventario</h2>
+            <div class="inv-list" id="inv-list"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAs1VbxixHJxl58B3xLeemlkDsuEVTfWTs",
+            authDomain: "authenticationpyp.firebaseapp.com",
+            projectId: "authenticationpyp",
+            storageBucket: "authenticationpyp.firebasestorage.app",
+            messagingSenderId: "419339169064",
+            appId: "1:419339169064:web:2b600685416be11866741d"
+        }
+        firebase.initializeApp(firebaseConfig)
+        var auth = firebase.auth()
+        var db = firebase.firestore()
+
+        function toast(msg) {
+            var t = document.getElementById('toast')
+            if (!t) return
+            t.textContent = msg
+            t.classList.add('show')
+            setTimeout(function () { t.classList.remove('show') }, 3000)
+        }
+
+        function esc(str) {
+            var d = document.createElement('div')
+            d.textContent = str
+            return d.innerHTML
+        }
+
+        function cargarProductos() {
+            var list = document.getElementById('inv-list')
+            if (!list) return
+            db.collection('inventario').orderBy('nombre').get().then(function (snap) {
+                if (snap.empty) {
+                    list.innerHTML = '<div class="empty-msg">No hay productos en el inventario.</div>'
+                    return
+                }
+                var html = ''
+                snap.forEach(function (doc) {
+                    var p = doc.data()
+                    p.id = doc.id
+                    html += '<div class="inv-item">' +
+                        '<img src="' + esc(p.img) + '" alt="' + esc(p.nombre) + '" onerror="this.src=\'img/icono.png\'">' +
+                        '<div class="info">' +
+                        '<div class="name">' + esc(p.nombre) + '</div>' +
+                        '<div class="meta">' + esc(p.desc) + ' — ' + p.categoria + '</div>' +
+                        '<div class="price">$' + Number(p.precio).toLocaleString('es-CO') + '</div>' +
+                        '</div>' +
+                        '<button class="btn-danger" data-id="' + p.id + '" data-nombre="' + esc(p.nombre) + '">ELIMINAR</button>' +
+                        '</div>'
+                })
+                list.innerHTML = html
+                list.querySelectorAll('.btn-danger').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var id = this.getAttribute('data-id')
+                        var nombre = this.getAttribute('data-nombre')
+                        if (!confirm('Eliminar "' + nombre + '" del inventario?')) return
+                        db.collection('inventario').doc(id).delete().then(function () {
+                            toast('Producto eliminado: ' + nombre)
+                            cargarProductos()
+                        }).catch(function (e) { toast('Error: ' + e.message) })
+                    })
+                })
+            }).catch(function (e) { list.innerHTML = '<div class="empty-msg">Error al cargar: ' + e.message + '</div>' })
+        }
+
+        document.getElementById('product-form').addEventListener('submit', function (e) {
+            e.preventDefault()
+            var img = document.getElementById('field-img').value.trim()
+            var nombre = document.getElementById('field-nombre').value.trim().toUpperCase()
+            var desc = document.getElementById('field-desc').value.trim()
+            var precio = parseFloat(document.getElementById('field-precio').value)
+            var categoria = document.getElementById('field-categoria').value
+
+            if (!img || !nombre || !desc || isNaN(precio) || precio <= 0) {
+                toast('Completa todos los campos correctamente.')
+                return
+            }
+
+            db.collection('inventario').add({
+                img: img,
+                nombre: nombre,
+                desc: desc,
+                precio: precio,
+                categoria: categoria
+            }).then(function () {
+                toast('✓ Producto agregado: ' + nombre)
+                document.getElementById('product-form').reset()
+                cargarProductos()
+            }).catch(function (e) { toast('Error: ' + e.message) })
+        })
+
+        auth.onAuthStateChanged(function (user) {
+            var warning = document.getElementById('auth-warning')
+            var app = document.getElementById('inv-app')
+            if (!user) {
+                warning.innerHTML = '<p>Debes <a href="login.html">iniciar sesión</a> para administrar el inventario.</p>'
+                warning.style.display = 'block'
+                app.style.display = 'none'
+            } else {
+                warning.style.display = 'none'
+                app.style.display = 'grid'
+                cargarProductos()
+            }
+        })
+    </script>
+</body>
+</html>

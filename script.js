@@ -14,9 +14,90 @@ const firebaseConfig = {
 }
 
 var auth = null
+var db = null
 if (typeof firebase !== 'undefined') {
     firebase.initializeApp(firebaseConfig)
-    auth = firebase.auth()
+    if (typeof firebase.auth === 'function') {
+        auth = firebase.auth()
+    }
+    if (typeof firebase.firestore === 'function') {
+        db = firebase.firestore()
+    }
+}
+
+// ===========================
+// PRODUCT DATA (fallback)
+// ===========================
+var productosCatalogo = {
+    tornillos: [
+        { id: 'fallback', img: 'img/tornillos.png', nombre: 'Perno Hexagonal 1/4 x 1', desc: 'Grado 2 - Rosca ordinaria', precio: 2500 },
+        { id: 'fallback', img: 'img/tornillos.png', nombre: 'Perno Hexagonal 3/8 x 1-1/2', desc: 'Grado 5 - Rosca ordinaria', precio: 3200 },
+        { id: 'fallback', img: 'img/tornillos.png', nombre: 'Perno Bristol 5/16 x 1', desc: 'Grado 5 - Rosca ordinaria', precio: 2800 },
+        { id: 'fallback', img: 'img/tornillos.png', nombre: 'Tuerca Hexagonal 1/4', desc: 'Grado 2 - Rosca ordinaria', precio: 800 },
+        { id: 'fallback', img: 'img/tornillotarjeta.png', nombre: 'Arandela Plana 1/4', desc: 'Acero al carbón', precio: 400 },
+        { id: 'fallback', img: 'img/tornillos.png', nombre: 'Perno Carriaje 3/8 x 2', desc: 'Grado 2 - Rosca ordinaria', precio: 3500 }
+    ],
+    herramientas: [
+        { id: 'fallback', img: 'img/taladro-de-mano.png', nombre: 'Destornillador Estrella 3/16 (3")', desc: 'Mango ergonómico - Punta magnética', precio: 4500 },
+        { id: 'fallback', img: 'img/taladro-de-mano.png', nombre: 'Destornillador Pala 1/4 (5")', desc: 'Mango ergonómico - Punta magnética', precio: 5200 },
+        { id: 'fallback', img: 'img/muestra.jpg', nombre: 'Llave Española 8"', desc: 'Acero al carbono - Cromado', precio: 6800 },
+        { id: 'fallback', img: 'img/muestra.jpg', nombre: 'Llave Mixta 5/16', desc: 'Acero al cromo vanadio', precio: 4200 },
+        { id: 'fallback', img: 'img/muestra.jpg', nombre: 'Pinza para Pines 6"', desc: 'Acero al carbono - Templado', precio: 7500 },
+        { id: 'fallback', img: 'img/muestra.jpg', nombre: 'Llave de Tubo 12"', desc: 'Acero al carbono - Cromado', precio: 9000 }
+    ],
+    maquinaria: [
+        { id: 'fallback', img: 'img/taladro.jpg', nombre: 'Pulidora DeWalt 4½" 700W', desc: 'Disco 4½" - Velocidad variable', precio: 45000 },
+        { id: 'fallback', img: 'img/taladro.jpg', nombre: 'Pulidora Inco 4½" 600W', desc: 'Disco 4½" - Compacta', precio: 28000 },
+        { id: 'fallback', img: 'img/taladro.jpg', nombre: 'Taladro DeWalt ⅜" 400W', desc: 'Mandril ⅜" - 400W - Cable', precio: 35000 },
+        { id: 'fallback', img: 'img/taladro.jpg', nombre: 'Taladro Inalámbrico Inco ⅜"', desc: 'Mandril ⅜" - 18V - 2 Baterías', precio: 42000 },
+        { id: 'fallback', img: 'img/taladro.jpg', nombre: 'Lijadora DeWalt', desc: 'Lijadora orbital - 400W', precio: 38000 },
+        { id: 'fallback', img: 'img/taladro.jpg', nombre: 'Lijadora Inco', desc: 'Lijadora orbital - 300W', precio: 22000 }
+    ],
+    hogar: [
+        { id: 'fallback', img: 'img/inversor.png', nombre: 'Hidrolavadora Inco 1200W', desc: '1200W - 110 bar - Incluye boquillas', precio: 65000 },
+        { id: 'fallback', img: 'img/inversor.png', nombre: 'Hidrolavadora Black & Decker', desc: '1400W - 120 bar - Incluye boquillas', precio: 85000 },
+        { id: 'fallback', img: 'img/inversor.png', nombre: 'Inversor Lincoln 160A', desc: '160A - Electrodo revestido', precio: 120000 },
+        { id: 'fallback', img: 'img/inversor.png', nombre: 'Inversor Inverrr 160A', desc: '160A - Portátil', precio: 95000 },
+        { id: 'fallback', img: 'img/inversor.png', nombre: 'Equipo TIG y MIG', desc: 'Dual voltaje - Incluye antorcha', precio: 180000 },
+        { id: 'fallback', img: 'img/inversor.png', nombre: 'Hidrolavadora Wilker', desc: '1300W - 115 bar - Incluye boquillas', precio: 75000 }
+    ]
+}
+
+// ===========================
+// LOAD PRODUCTS FROM FIRESTORE
+// ===========================
+function cargarProductosDesdeFirebase(callback) {
+    if (!db) {
+        if (callback) callback()
+        return
+    }
+    db.collection('inventario').get().then(function (snapshot) {
+        if (snapshot.empty) {
+            if (callback) callback()
+            return
+        }
+        var nuevoCatalogo = { tornillos: [], herramientas: [], maquinaria: [], hogar: [] }
+        snapshot.forEach(function (doc) {
+            var p = doc.data()
+            p.id = doc.id
+            var cat = p.categoria || 'tornillos'
+            if (!nuevoCatalogo[cat]) nuevoCatalogo[cat] = []
+            nuevoCatalogo[cat].push(p)
+        })
+        // Sort each category by name
+        for (var c in nuevoCatalogo) {
+            nuevoCatalogo[c].sort(function (a, b) { return a.nombre.localeCompare(b.nombre) })
+        }
+        // Only replace if we got data
+        var total = 0
+        for (var c2 in nuevoCatalogo) total += nuevoCatalogo[c2].length
+        if (total > 0) {
+            productosCatalogo = nuevoCatalogo
+        }
+        if (callback) callback()
+    }).catch(function () {
+        if (callback) callback()
+    })
 }
 
 // ===========================
@@ -65,6 +146,208 @@ document.addEventListener('DOMContentLoaded', function () {
         if (nextBtn) nextBtn.addEventListener('click', function () { stopAutoplay(); nextSlide(); startAutoplay() })
 
         startAutoplay()
+    }
+
+    // === Product Grid (index) ===
+    function renderProductGrid() {
+        for (var cat in productosCatalogo) {
+            var grid = document.getElementById('grid-' + cat)
+            if (!grid) continue
+            var html = ''
+            productosCatalogo[cat].forEach(function (p, idx) {
+                html += '<div class="prod-card" data-cat="' + cat + '" data-idx="' + idx + '">' +
+                    '<img src="' + p.img + '" alt="' + p.nombre + '" loading="lazy">' +
+                    '<span class="prod-name">' + p.nombre + '</span>' +
+                    '</div>'
+            })
+            grid.innerHTML = html
+        }
+    }
+
+    renderProductGrid()
+
+    // === Catálogo Page ===
+    var catContent = document.getElementById('cat-page-content')
+
+    function renderCatalogoPage() {
+        if (!catContent) return
+        var catLabels = {
+            tornillos: { nombre: 'Tornillería', icono: 'img/tornillo.png' },
+            herramientas: { nombre: 'Herramientas', icono: 'img/taladro-de-mano.png' },
+            maquinaria: { nombre: 'Maquinaria', icono: 'img/taladro.png' },
+            hogar: { nombre: 'Hogar y Construcción', icono: 'img/tornillotarjeta.png' }
+        }
+        var html = ''
+        for (var cat in productosCatalogo) {
+            var info = catLabels[cat] || { nombre: cat, icono: '' }
+            html += '<h2 id="cat-' + cat + '"><img src="' + info.icono + '" style="width:24px;height:24px;object-fit:contain;"> ' + info.nombre + ' <span class="count">(' + productosCatalogo[cat].length + ')</span></h2>'
+            html += '<div class="cat-page-grid">'
+            productosCatalogo[cat].forEach(function (p, idx) {
+                html += '<div class="cat-page-item" data-cat="' + cat + '" data-idx="' + idx + '">' +
+                    '<img src="' + p.img + '" alt="' + p.nombre + '" loading="lazy">' +
+                    '<div class="prod-name">' + p.nombre + '</div>' +
+                    '<div class="prod-desc">' + p.desc + '</div>' +
+                    '<div class="prod-price">$' + p.precio.toLocaleString('es-CO') + '</div>' +
+                    '</div>'
+            })
+            html += '</div>'
+        }
+        catContent.innerHTML = html
+    }
+
+    renderCatalogoPage()
+
+    // If Firestore available, load from there and re-render
+    cargarProductosDesdeFirebase(function () {
+        renderProductGrid()
+        renderCatalogoPage()
+    })
+
+    // === Product Modal ===
+    var modal = document.getElementById('prod-modal')
+    var modalImg = document.getElementById('modal-img')
+    var modalTitle = document.getElementById('modal-title')
+    var modalDesc = document.getElementById('modal-desc')
+    var modalPrice = document.getElementById('modal-price')
+    var modalClose = document.getElementById('prod-modal-close')
+    var modalOrder = document.getElementById('modal-order')
+
+    document.addEventListener('click', function (e) {
+        var card = e.target.closest('.prod-card, .cat-page-item')
+        if (!card) return
+        var cat = card.getAttribute('data-cat')
+        var idx = parseInt(card.getAttribute('data-idx'))
+        var prod = productosCatalogo[cat][idx]
+        if (!prod) return
+
+        modalImg.src = prod.img
+        modalImg.alt = prod.nombre
+        modalTitle.textContent = prod.nombre
+        modalDesc.textContent = prod.desc
+        modalPrice.textContent = '$' + prod.precio.toLocaleString('es-CO')
+        modal.classList.add('show')
+    })
+
+    if (modalClose) {
+        modalClose.addEventListener('click', function () {
+            modal.classList.remove('show')
+        })
+    }
+
+    if (modal) {
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) modal.classList.remove('show')
+        })
+    }
+
+    // === Cart ===
+    var cart = []
+    var whatsappNumber = '573134140072' // Cambiar por número real
+
+    function addToCart(nombre, precio) {
+        var idx = cart.findIndex(function (i) { return i.nombre === nombre })
+        if (idx !== -1) {
+            cart[idx].cant += 1
+        } else {
+            cart.push({ nombre: nombre, precio: precio, cant: 1 })
+        }
+        renderCart()
+    }
+
+    function removeFromCart(nombre) {
+        cart = cart.filter(function (i) { return i.nombre !== nombre })
+        renderCart()
+    }
+
+    function renderCart() {
+        var container = document.getElementById('cart-items')
+        var footer = document.getElementById('cart-footer')
+        var badge = document.getElementById('cart-badge')
+        var totalEl = document.getElementById('cart-total')
+
+        var total = 0
+        var count = 0
+        var html = ''
+
+        cart.forEach(function (item) {
+            total += item.precio * item.cant
+            count += item.cant
+            html += '<div class="cart-item">' +
+                '<div class="cart-item-name">' + item.nombre + (item.cant > 1 ? ' <small style="color:#888;">x' + item.cant + '</small>' : '') + '</div>' +
+                '<div style="display:flex;align-items:center;gap:0.5rem;">' +
+                '<span class="cart-item-price">$' + (item.precio * item.cant).toLocaleString('es-CO') + '</span>' +
+                '<button class="cart-item-remove" data-nombre="' + item.nombre + '">✕</button>' +
+                '</div></div>'
+        })
+
+        if (cart.length === 0) {
+            html = '<div class="cart-empty">El carrito está vacío.</div>'
+            if (footer) footer.style.display = 'none'
+        } else {
+            if (footer) footer.style.display = 'grid'
+        }
+
+        if (container) container.innerHTML = html
+        if (badge) badge.textContent = count
+        if (totalEl) totalEl.textContent = 'Total: $' + total.toLocaleString('es-CO')
+
+        container.querySelectorAll('.cart-item-remove').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                removeFromCart(this.getAttribute('data-nombre'))
+            })
+        })
+    }
+
+    if (modalOrder) {
+        modalOrder.addEventListener('click', function () {
+            var nombre = modalTitle.textContent
+            var precioTexto = modalPrice.textContent.replace(/[^0-9]/g, '')
+            var precio = parseFloat(precioTexto)
+            if (!nombre || !precio) return
+            addToCart(nombre, precio)
+            mostrarToast('✓ ' + nombre + ' agregado al carrito')
+            modal.classList.remove('show')
+        })
+    }
+
+    // Cart FAB
+    var cartFab = document.getElementById('cart-fab')
+    var cartDrawer = document.getElementById('cart-drawer')
+    var cartOverlay = document.getElementById('cart-overlay')
+    var cartClose = document.getElementById('cart-close')
+    var cartOrder = document.getElementById('cart-order')
+
+    function openCart() {
+        if (cartDrawer) cartDrawer.classList.add('show')
+        if (cartOverlay) cartOverlay.classList.add('show')
+    }
+
+    function closeCart() {
+        if (cartDrawer) cartDrawer.classList.remove('show')
+        if (cartOverlay) cartOverlay.classList.remove('show')
+    }
+
+    if (cartFab) cartFab.addEventListener('click', openCart)
+    if (cartClose) cartClose.addEventListener('click', closeCart)
+    if (cartOverlay) cartOverlay.addEventListener('click', closeCart)
+
+    if (cartOrder) {
+        cartOrder.addEventListener('click', function () {
+            if (cart.length === 0) { mostrarToast('El carrito está vacío.'); return }
+
+            var msg = '*Pedido PYP Tornillos y Herramientas*%0A%0A'
+            var total = 0
+            cart.forEach(function (item) {
+                var subtotal = item.precio * item.cant
+                total += subtotal
+                msg += '• ' + item.nombre + (item.cant > 1 ? ' x' + item.cant : '') + ' - $' + subtotal.toLocaleString('es-CO') + '%0A'
+            })
+            msg += '%0A*Total: $' + total.toLocaleString('es-CO') + '*%0A%0A'
+            msg += '_Gracias por tu compra!_'
+
+            closeCart()
+            window.open('https://wa.me/' + whatsappNumber + '?text=' + msg, '_blank')
+        })
     }
 
     // === Menu Overlay (Hamburguesa) ===
@@ -127,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var whatsappLink = document.getElementById('whatsapp-link')
     if (whatsappLink) {
         whatsappLink.addEventListener('click', function (e) {
-            var phone = '3134140072'
+            var phone = '573134140072'
             var message = encodeURIComponent('Hola, quiero información sobre sus productos.')
             this.href = 'https://wa.me/' + phone + '?text=' + message
         })
@@ -136,7 +419,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // === Order Buttons ===
     var orderButtons = document.querySelectorAll('.btn')
     orderButtons.forEach(function (btn) {
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function (e) {
+            if (btn.id === 'modal-order') return
+            if (btn.tagName === 'A') return
             mostrarToast('Producto agregado al carrito (demostración).')
         })
     })

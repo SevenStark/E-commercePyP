@@ -56,6 +56,23 @@
         .btn-power:active { transform: scale(0.9); }
         .btn-power svg { fill: #fff; width: 20px; height: 20px; }
 
+        .btn-hamburger {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .btn-hamburger:hover { background: rgba(0,0,0,0.25); }
+        .btn-hamburger:active { transform: scale(0.9); }
+        .btn-hamburger svg { fill: var(--text-dark); }
+
         /* ===== COMPANY BAR ===== */
         .company-bar {
             background: #1a1a1a;
@@ -101,6 +118,25 @@
         }
         .btn-sm-outline:hover { background: rgba(249,193,25,0.15); }
         .btn-sm-outline:active { transform: scale(0.95); }
+
+        /* ===== HAMBURGER DROPDOWN ===== */
+        .ham-dropdown {
+            display: none;
+            background: #1a1a1a;
+            border-bottom: 2px solid var(--primary);
+            padding: 0.5rem 1rem;
+        }
+        .ham-dropdown.show { display: block; }
+        .ham-item {
+            display: block;
+            padding: 12px 14px;
+            color: #eee;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .ham-item:hover { background: #333; color: var(--primary); }
         .btn-sm-solid {
             background: var(--primary);
             color: var(--text-dark);
@@ -449,12 +485,18 @@
 
     <!-- ===== HEADER ===== -->
     <header class="app-header">
-        <img src="img/descarga.png" alt="PYP" class="logo-round">
-        <h1>Tornillos y Herramientas PYP</h1>
+        <button class="btn-hamburger" id="btn-hamburger">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+        </button>
         <button class="btn-power" id="btn-logout" title="Cerrar sesión">
             <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.59-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
         </button>
     </header>
+
+    <!-- ===== HAMBURGER DROPDOWN ===== -->
+    <div class="ham-dropdown" id="ham-dropdown">
+        <a href="inventario.html" class="ham-item" id="ham-inventario">📦 Inventario</a>
+    </div>
 
     <!-- ===== COMPANY BAR ===== -->
     <div class="company-bar" id="company-bar">
@@ -557,6 +599,11 @@
 
         document.getElementById('btn-logout').addEventListener('click', function () {
             auth.signOut()
+        })
+
+        // ===== HAMBURGER MENU =====
+        document.getElementById('btn-hamburger').addEventListener('click', function () {
+            document.getElementById('ham-dropdown').classList.toggle('show')
         })
 
         // ===== LOAD DATA =====
