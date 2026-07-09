@@ -426,7 +426,9 @@ a { text-decoration: none; color: inherit; }
 }
 
 .property-form {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     gap: 0.6rem;
 }
 
@@ -450,6 +452,7 @@ a { text-decoration: none; color: inherit; }
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
+    flex: 1;
 }
 
 .prod-card {
@@ -796,6 +799,7 @@ a { text-decoration: none; color: inherit; }
     transition: all var(--transition);
     width: 100%;
     margin-top: 0.25rem;
+    text-align: center;
     box-shadow: 0 4px 12px rgba(249, 193, 25, 0.2);
 }
 
@@ -1140,7 +1144,7 @@ a { text-decoration: none; color: inherit; }
         gap: 1.5rem;
     }
 
-    .btn { width: auto; align-self: flex-start; }
+    .btn { width: 100%; }
 
     .bottom-nav {
         display: flex;

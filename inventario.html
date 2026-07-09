@@ -105,6 +105,69 @@
             min-height: 28px;
             font-weight: 700;
         }
+        .btn-edit {
+            background: #2980b9;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            min-height: 28px;
+            font-weight: 700;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+        .modal-content h2 {
+            font-size: 1rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.75rem;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .modal-actions button {
+            flex: 1;
+            min-height: 42px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .btn-save {
+            background: var(--primary);
+            color: var(--text-dark);
+        }
+        .btn-cancel {
+            background: #444;
+            color: #ccc;
+        }
         .inv-list { display: grid; gap: 0.5rem; }
         .inv-item {
             display: flex;
@@ -182,7 +245,7 @@
 <body>
     <header class="inv-header">
         <a href="inicio.html" style="text-decoration:none;font-size:1.3rem;">&#8592;</a>
-        <h1>📦 INVENTARIO</h1>
+        <h1>INVENTARIO</h1>
         <a href="index.html" target="_blank">Ver tienda</a>
     </header>
 
@@ -208,6 +271,14 @@
                     <input type="text" id="field-desc" placeholder="ej: Grado 2 - Rosca ordinaria" required>
                 </div>
                 <div class="form-group">
+                    <label>Referencia</label>
+                    <input type="text" id="field-ref" placeholder="ej: TOR-001">
+                </div>
+                <div class="form-group">
+                    <label>Empresa distribuidora</label>
+                    <input type="text" id="field-empresa" placeholder="ej: Industrias XYZ">
+                </div>
+                <div class="form-group">
                     <label>Precio ($)</label>
                     <input type="number" id="field-precio" placeholder="0" step="0.01" min="0" required>
                 </div>
@@ -228,6 +299,52 @@
         <div class="card">
             <h2>Productos en Inventario</h2>
             <div class="inv-list" id="inv-list"></div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-content">
+            <h2>Editar Producto</h2>
+            <form id="edit-form">
+                <div class="form-group">
+                    <label>URL de la imagen</label>
+                    <input type="text" id="edit-img" required>
+                </div>
+                <div class="form-group">
+                    <label>Nombre del producto</label>
+                    <input type="text" id="edit-nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción breve</label>
+                    <input type="text" id="edit-desc" required>
+                </div>
+                <div class="form-group">
+                    <label>Referencia</label>
+                    <input type="text" id="edit-ref">
+                </div>
+                <div class="form-group">
+                    <label>Empresa distribuidora</label>
+                    <input type="text" id="edit-empresa">
+                </div>
+                <div class="form-group">
+                    <label>Precio ($)</label>
+                    <input type="number" id="edit-precio" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="edit-categoria">
+                        <option value="tornillos">Tornillería</option>
+                        <option value="herramientas">Herramientas</option>
+                        <option value="maquinaria">Maquinaria</option>
+                        <option value="hogar">Hogar y Construcción</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="btn-cancel-edit">CANCELAR</button>
+                    <button type="submit" class="btn-save">GUARDAR</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -278,10 +395,11 @@
                     html += '<div class="inv-item">' +
                         '<img src="' + esc(p.img) + '" alt="' + esc(p.nombre) + '" onerror="this.src=\'img/icono.png\'">' +
                         '<div class="info">' +
-                        '<div class="name">' + esc(p.nombre) + '</div>' +
-                        '<div class="meta">' + esc(p.desc) + ' — ' + p.categoria + '</div>' +
+                        '<div class="name">' + esc(p.nombre) + (p.ref ? ' <span style="color:#888;font-weight:400;font-size:0.7rem;">' + esc(p.ref) + '</span>' : '') + '</div>' +
+                        '<div class="meta">' + esc(p.desc) + (p.empresa ? ' — ' + esc(p.empresa) : '') + ' — ' + p.categoria + '</div>' +
                         '<div class="price">$' + Number(p.precio).toLocaleString('es-CO') + '</div>' +
                         '</div>' +
+                        '<button class="btn-edit" data-id="' + p.id + '">EDITAR</button>' +
                         '<button class="btn-danger" data-id="' + p.id + '" data-nombre="' + esc(p.nombre) + '">ELIMINAR</button>' +
                         '</div>'
                 })
@@ -297,29 +415,95 @@
                         }).catch(function (e) { toast('Error: ' + e.message) })
                     })
                 })
+                list.querySelectorAll('.btn-edit').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var id = this.getAttribute('data-id')
+                        db.collection('inventario').doc(id).get().then(function (doc) {
+                            if (!doc.exists) return
+                            var p = doc.data()
+                            document.getElementById('edit-img').value = p.img || ''
+                            document.getElementById('edit-nombre').value = p.nombre || ''
+                            document.getElementById('edit-desc').value = p.desc || ''
+                            document.getElementById('edit-ref').value = p.ref || ''
+                            document.getElementById('edit-empresa').value = p.empresa || ''
+                            document.getElementById('edit-precio').value = p.precio || ''
+                            document.getElementById('edit-categoria').value = p.categoria || 'tornillos'
+                            document.getElementById('edit-modal').dataset.id = id
+                            document.getElementById('edit-modal').classList.add('show')
+                        }).catch(function (e) { toast('Error: ' + e.message) })
+                    })
+                })
             }).catch(function (e) { list.innerHTML = '<div class="empty-msg">Error al cargar: ' + e.message + '</div>' })
         }
+
+        document.getElementById('edit-form').addEventListener('submit', function (e) {
+            e.preventDefault()
+            var id = document.getElementById('edit-modal').dataset.id
+            if (!id) return
+            var img = document.getElementById('edit-img').value.trim()
+            var nombre = document.getElementById('edit-nombre').value.trim().toUpperCase()
+            var desc = document.getElementById('edit-desc').value.trim()
+            var ref = document.getElementById('edit-ref').value.trim().toUpperCase()
+            var empresa = document.getElementById('edit-empresa').value.trim().toUpperCase()
+            var precio = parseFloat(document.getElementById('edit-precio').value)
+            var categoria = document.getElementById('edit-categoria').value
+
+            if (!img || !nombre || !desc || isNaN(precio) || precio <= 0) {
+                toast('Completa todos los campos obligatorios.')
+                return
+            }
+
+            var data = {
+                img: img,
+                nombre: nombre,
+                desc: desc,
+                precio: precio,
+                categoria: categoria
+            }
+            if (ref) data.ref = ref
+            if (empresa) data.empresa = empresa
+
+            db.collection('inventario').doc(id).update(data).then(function () {
+                toast('✓ Producto actualizado: ' + nombre)
+                document.getElementById('edit-modal').classList.remove('show')
+                cargarProductos()
+            }).catch(function (e) { toast('Error: ' + e.message) })
+        })
+
+        document.getElementById('btn-cancel-edit').addEventListener('click', function () {
+            document.getElementById('edit-modal').classList.remove('show')
+        })
+
+        document.getElementById('edit-modal').addEventListener('click', function (e) {
+            if (e.target === this) this.classList.remove('show')
+        })
 
         document.getElementById('product-form').addEventListener('submit', function (e) {
             e.preventDefault()
             var img = document.getElementById('field-img').value.trim()
             var nombre = document.getElementById('field-nombre').value.trim().toUpperCase()
             var desc = document.getElementById('field-desc').value.trim()
+            var ref = document.getElementById('field-ref').value.trim().toUpperCase()
+            var empresa = document.getElementById('field-empresa').value.trim().toUpperCase()
             var precio = parseFloat(document.getElementById('field-precio').value)
             var categoria = document.getElementById('field-categoria').value
 
             if (!img || !nombre || !desc || isNaN(precio) || precio <= 0) {
-                toast('Completa todos los campos correctamente.')
+                toast('Completa todos los campos obligatorios.')
                 return
             }
 
-            db.collection('inventario').add({
+            var data = {
                 img: img,
                 nombre: nombre,
                 desc: desc,
                 precio: precio,
                 categoria: categoria
-            }).then(function () {
+            }
+            if (ref) data.ref = ref
+            if (empresa) data.empresa = empresa
+
+            db.collection('inventario').add(data).then(function () {
                 toast('✓ Producto agregado: ' + nombre)
                 document.getElementById('product-form').reset()
                 cargarProductos()

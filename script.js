@@ -76,23 +76,20 @@ function cargarProductosDesdeFirebase(callback) {
             if (callback) callback()
             return
         }
-        var nuevoCatalogo = { tornillos: [], herramientas: [], maquinaria: [], hogar: [] }
+        var dataPorCategoria = {}
         snapshot.forEach(function (doc) {
             var p = doc.data()
             p.id = doc.id
+            if (!p.img) p.img = 'img/muestra.jpg'
             var cat = p.categoria || 'tornillos'
-            if (!nuevoCatalogo[cat]) nuevoCatalogo[cat] = []
-            nuevoCatalogo[cat].push(p)
+            if (!dataPorCategoria[cat]) dataPorCategoria[cat] = []
+            dataPorCategoria[cat].push(p)
         })
-        // Sort each category by name
-        for (var c in nuevoCatalogo) {
-            nuevoCatalogo[c].sort(function (a, b) { return a.nombre.localeCompare(b.nombre) })
-        }
-        // Only replace if we got data
-        var total = 0
-        for (var c2 in nuevoCatalogo) total += nuevoCatalogo[c2].length
-        if (total > 0) {
-            productosCatalogo = nuevoCatalogo
+        for (var cat in dataPorCategoria) {
+            dataPorCategoria[cat].sort(function (a, b) { return a.nombre.localeCompare(b.nombre) })
+            if (dataPorCategoria[cat].length > 0) {
+                productosCatalogo[cat] = dataPorCategoria[cat]
+            }
         }
         if (callback) callback()
     }).catch(function () {
